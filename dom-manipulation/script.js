@@ -23,22 +23,38 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("quotes", JSON.stringify(quotes));
   }
 
-  async function syncWithServer() {
+  async function fetchQuotesFromServer() {
     try {
       const response = await fetch(SERVER_URL);
-      const serverQuotes = await response.json();
-
-      quotes = serverQuotes.map((serverQuote, index) => ({
-        text: serverQuote.title,
-        category: serverQuote.body.split(" ")[0] || "General",
+      if (!response.ok) throw new Error("Failed to fetch data from server");
+      const serverData = await response.json();
+      return serverData.map((item) => ({
+        text: item.title,
+        category: item.body.split(" ")[0] || "General",
       }));
-
-      saveQuotes();
-      populateCategories();
-      filterQuotes();
     } catch (error) {
-      console.error("Error syncing with server:", error);
+      console.error("Error fetching from server:", error);
+      return [];
     }
+  }
+
+  async function syncWithServer() {
+    const serverQuotes = await fetchQuotesFromServer();
+
+    // Simple conflict resolution: merge unique quotes
+    const uniqueQuotes = [...quotes, ...serverQuotes].reduce((acc, current) => {
+      const x = acc.find((item) => item.text === current.text);
+      if (!x) {
+        return acc.concat([current]);
+      } else {
+        return acc;
+      }
+    }, []);
+
+    quotes = uniqueQuotes;
+    saveQuotes();
+    populateCategories();
+    filterQuotes();
   }
 
   function populateCategories() {
