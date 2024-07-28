@@ -91,6 +91,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  function handleKeyDown(event) {
+    if (event.key === "Enter") {
+      addQuote();
+    }
+  }
+
   // Event listeners
   document
     .getElementById("newQuote")
@@ -99,6 +105,12 @@ document.addEventListener("DOMContentLoaded", () => {
   document
     .getElementById("exportQuotes")
     .addEventListener("click", exportQuotes);
+  document.getElementById("addQuoteButton").addEventListener("Enter", addQuote);
+  document.getElementById("importFile").addEventListener("change", importFromJsonFile);
+
+  document.getElementById("newQuoteText").addEventListener("keydown", handleKeyDown);
+  document.getElementById("newQuoteCategory").addEventListener("keydown", handleKeyDown);
+
 
   const lastViewedQuote = JSON.parse(sessionStorage.getItem("lastViewedQuote"));
   if (lastViewedQuote) {
