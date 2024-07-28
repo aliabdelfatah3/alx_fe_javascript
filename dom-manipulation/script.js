@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  async function syncWithServer() {
+  async function syncQuotes() {
     const serverQuotes = await fetchQuotesFromServer();
 
     // Simple conflict resolution: merge unique quotes
@@ -226,5 +226,5 @@ document.addEventListener("DOMContentLoaded", () => {
   populateCategories();
   filterQuotes();
   createAddQuoteForm();
-  syncWithServer();
+  syncQuotes();
 });
