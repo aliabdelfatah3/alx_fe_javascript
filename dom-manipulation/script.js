@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-
   const quotes = [
     {
       text: "Life is what happens when you're busy making other plans.",
@@ -15,11 +14,16 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   ];
 
+  function saveQuotes() {
+    localStorage.setItem("quotes", JSON.stringify(quotes));
+  }
+
   function showRandomQuote() {
     const randomIndex = Math.floor(Math.random() * quotes.length);
     const quote = quotes[randomIndex];
     const quoteDisplay = document.getElementById("quoteDisplay");
     quoteDisplay.innerHTML = `${quote.text} <br><br> <em>- ${quote.category}</em>`;
+    sessionStorage.setItem("lastViewedQuote", JSON.stringify(quote));
   }
 
   function addQuote() {
@@ -27,12 +31,33 @@ document.addEventListener("DOMContentLoaded", () => {
     const newQuoteCategory = document.getElementById("newQuoteCategory").value;
     if (newQuoteText && newQuoteCategory) {
       quotes.push({ text: newQuoteText, category: newQuoteCategory });
+      saveQuotes();
       document.getElementById("newQuoteText").value = "";
       document.getElementById("newQuoteCategory").value = "";
       alert("New quote added successfully!");
     } else {
       alert("Please enter both a quote and a category.");
     }
+  }
+  function exportQuotes() {
+    const dataStr = JSON.stringify(quotes, null, 2);
+    const blob = new Blob([dataStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "quotes.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+  function importFromJsonFile(event) {
+    const fileReader = new FileReader();
+    fileReader.onload = function (event) {
+      const importedQuotes = JSON.parse(event.target.result);
+      quotes.push(...importedQuotes);
+      saveQuotes();
+      alert("Quotes imported successfully!");
+    };
+    fileReader.readAsText(event.target.files[0]);
   }
 
   function createAddQuoteForm() {
@@ -71,6 +96,17 @@ document.addEventListener("DOMContentLoaded", () => {
     .getElementById("newQuote")
     .addEventListener("click", showRandomQuote);
   document.getElementById("addQuoteButton").addEventListener("click", addQuote);
+  document
+    .getElementById("exportQuotes")
+    .addEventListener("click", exportQuotes);
+
+  const lastViewedQuote = JSON.parse(sessionStorage.getItem("lastViewedQuote"));
+  if (lastViewedQuote) {
+    const quoteDisplay = document.getElementById("quoteDisplay");
+    quoteDisplay.innerHTML = `${lastViewedQuote.text} <br><br> <em>- ${lastViewedQuote.category}</em>`;
+  } else {
+    showRandomQuote();
+  }
 
   createAddQuoteForm();
 });
