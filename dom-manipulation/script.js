@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   const SERVER_URL = "https://jsonplaceholder.typicode.com/posts";
+  const SYNC_INTERVAL = 60000;
 
   const quotes = JSON.parse(localStorage.getItem("quotes")) || [
     {
@@ -227,4 +228,5 @@ document.addEventListener("DOMContentLoaded", () => {
   filterQuotes();
   createAddQuoteForm();
   syncQuotes();
+  setInterval(syncQuotes, SYNC_INTERVAL);
 });
