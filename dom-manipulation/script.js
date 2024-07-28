@@ -1,6 +1,5 @@
-// Array of quote objects
 document.addEventListener("DOMContentLoaded", () => {
-  // Array of quote objects
+
   const quotes = [
     {
       text: "Life is what happens when you're busy making other plans.",
@@ -16,7 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   ];
 
-  // Function to display a random quote
   function showRandomQuote() {
     const randomIndex = Math.floor(Math.random() * quotes.length);
     const quote = quotes[randomIndex];
@@ -24,7 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
     quoteDisplay.innerHTML = `${quote.text} <br><br> <em>- ${quote.category}</em>`;
   }
 
-  // Function to add a new quote
   function addQuote() {
     const newQuoteText = document.getElementById("newQuoteText").value;
     const newQuoteCategory = document.getElementById("newQuoteCategory").value;
@@ -38,9 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Function to create the form for adding new quotes
   function createAddQuoteForm() {
-    // Check if the form already exists to avoid duplication
     if (
       !document.getElementById("newQuoteText") &&
       !document.getElementById("newQuoteCategory")
@@ -77,6 +72,5 @@ document.addEventListener("DOMContentLoaded", () => {
     .addEventListener("click", showRandomQuote);
   document.getElementById("addQuoteButton").addEventListener("click", addQuote);
 
-  // Create the form on page load
   createAddQuoteForm();
 });
