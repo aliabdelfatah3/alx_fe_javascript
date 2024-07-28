@@ -75,6 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
     saveQuotes();
     populateCategories();
     filterQuotes();
+    alert("Quotes synced with server!");
   }
 
   function populateCategories() {
