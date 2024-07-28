@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
+  const SERVER_URL = "https://jsonplaceholder.typicode.com/posts";
+
   const quotes = JSON.parse(localStorage.getItem("quotes")) || [
     {
       text: "Life is what happens when you're busy making other plans.",
@@ -14,8 +16,29 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   ];
 
+  const lastSelectedCategory =
+    localStorage.getItem("lastSelectedCategory") || "all";
+
   function saveQuotes() {
     localStorage.setItem("quotes", JSON.stringify(quotes));
+  }
+
+  async function syncWithServer() {
+    try {
+      const response = await fetch(SERVER_URL);
+      const serverQuotes = await response.json();
+
+      quotes = serverQuotes.map((serverQuote, index) => ({
+        text: serverQuote.title,
+        category: serverQuote.body.split(" ")[0] || "General",
+      }));
+
+      saveQuotes();
+      populateCategories();
+      filterQuotes();
+    } catch (error) {
+      console.error("Error syncing with server:", error);
+    }
   }
 
   function populateCategories() {
@@ -160,8 +183,9 @@ document.addEventListener("DOMContentLoaded", () => {
   } else {
     showRandomQuote();
   }
-  
+
   populateCategories();
   filterQuotes();
   createAddQuoteForm();
+  syncWithServer();
 });
