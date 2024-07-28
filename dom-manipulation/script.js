@@ -38,6 +38,25 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  async function postQuoteToServer(quote) {
+    try {
+      const response = await fetch(SERVER_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: quote.text,
+          body: quote.category,
+        }),
+      });
+      if (!response.ok) throw new Error("Failed to post data to server");
+      console.log("Quote posted successfully");
+    } catch (error) {
+      console.error("Error posting to server:", error);
+    }
+  }
+
   async function syncWithServer() {
     const serverQuotes = await fetchQuotesFromServer();
 
@@ -101,12 +120,15 @@ document.addEventListener("DOMContentLoaded", () => {
     sessionStorage.setItem("lastViewedQuote", JSON.stringify(quote));
   }
 
-  function addQuote() {
+  async function addQuote() {
     const newQuoteText = document.getElementById("newQuoteText").value;
     const newQuoteCategory = document.getElementById("newQuoteCategory").value;
     if (newQuoteText && newQuoteCategory) {
-      quotes.push({ text: newQuoteText, category: newQuoteCategory });
+      const newQuote = { text: newQuoteText, category: newQuoteCategory };
+      quotes.push(newQuote);
       saveQuotes();
+      populateCategories();
+      await postQuoteToServer(newQuote); // Sync with server
       document.getElementById("newQuoteText").value = "";
       document.getElementById("newQuoteCategory").value = "";
       alert("New quote added successfully!");
@@ -114,6 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("Please enter both a quote and a category.");
     }
   }
+
   function exportQuotes() {
     const dataStr = JSON.stringify(quotes, null, 2);
     const blob = new Blob([dataStr], { type: "application/json" });
